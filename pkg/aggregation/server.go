@@ -20,6 +20,7 @@ const (
 )
 
 func ListenAndServe(ctx context.Context, url string, caCert []byte, token string, handler http.Handler) {
+	logrus.Debugf("ListenAndServe: %+v", url)
 	dialer := websocket.Dialer{
 		Proxy:            http.ProxyFromEnvironment,
 		HandshakeTimeout: HandshakeTimeOut,

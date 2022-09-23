@@ -12,6 +12,7 @@ replace (
 
 require (
 	github.com/adrg/xdg v0.3.1
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/imdario/mergo v0.3.8 // indirect

@@ -11,6 +11,9 @@ import (
 )
 
 func Watch(ctx context.Context, controller v1.SecretController, secretNamespace, secretName string, httpHandler http.Handler) {
+	logrus.Debug("watch")
+	// logrus.Debug("controller")
+	// spew.Dump(controller)
 	if secretNamespace == "" || secretName == "" {
 		return
 	}
@@ -20,6 +23,8 @@ func Watch(ctx context.Context, controller v1.SecretController, secretNamespace,
 		namespace: secretNamespace,
 		name:      secretName,
 	}
+	// logrus.Debug("handler")
+	// spew.Dump(h)
 	controller.OnChange(ctx, "aggregation-controller", h.OnSecret)
 }
 
@@ -35,12 +40,14 @@ type handler struct {
 }
 
 func (h *handler) OnSecret(key string, secret *corev1.Secret) (*corev1.Secret, error) {
+	logrus.Debug("onSecret")
 	if secret == nil {
 		return nil, nil
 	}
 
 	if secret.Namespace != h.namespace ||
 		secret.Name != h.name {
+		logrus.Debugf("not equal: sNs: %v hNs: %v sName: %v hName: %v", secret.Namespace, h.namespace, secret.Name, h.name)
 		return secret, nil
 	}
 
@@ -49,8 +56,10 @@ func (h *handler) OnSecret(key string, secret *corev1.Secret) (*corev1.Secret, e
 		return secret, err
 	}
 	if !restart {
+		logrus.Debug("restart: %v", restart)
 		return secret, nil
 	}
+	logrus.Debugf("%+v sNamespace: %+v hNamespace: %+v url: %+v hUrl: %+v", secret.Name, secret.Namespace, h.namespace, url, h.url)
 
 	if h.cancel != nil {
 		logrus.Info("Restarting steve aggregation client")
